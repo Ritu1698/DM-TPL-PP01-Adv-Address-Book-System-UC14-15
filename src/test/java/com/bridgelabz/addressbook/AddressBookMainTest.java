@@ -47,4 +47,15 @@ public class AddressBookMainTest {
         Assert.assertEquals(3, count);
     }
 
+    @Test
+    public void given3Contacts_whenWrittenSuccessfullyToJsonFile_shouldReturnTrue() throws IOException {
+        Assert.assertTrue(AddressBookMain.writeJSON(contacts));
+    }
+
+    @Test
+    public void given3Contacts_whenReadSuccessfullyFromJsonFile_shouldReturnTotalsContactSize() throws IOException {
+        int count = AddressBookMain.readFromJSON();
+        Assert.assertEquals(3, count);
+    }
+
 }

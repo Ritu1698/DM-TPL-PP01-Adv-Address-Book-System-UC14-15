@@ -1,5 +1,8 @@
 package com.bridgelabz.addressbook;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
@@ -10,10 +13,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -25,6 +25,7 @@ public class AddressBookMain {
     public HashMap<String, ArrayList<Contact>> CityPersonMap;
     public static final String ADDRESS_BOOK_FILE = "C:/Users/Rituparna Biswas/eclipse-workspace/DM TPL PP01 Adv Address Book System UC14-15/src/main/resources/AddressBook.txt";
     public static final String ADDRESS_BOOK_CSV = "C:/Users/Rituparna Biswas/eclipse-workspace/DM TPL PP01 Adv Address Book System UC14-15/src/main/resources/AddressBook.csv";
+    public static final String ADDRESS_BOOK_JSON = "C:/Users/Rituparna Biswas/eclipse-workspace/DM TPL PP01 Adv Address Book System UC14-15/src/main/resources/AddressBook.json";
     Scanner sc = new Scanner(System.in);
     Scanner sc1 = new Scanner(System.in);
     Scanner sc2 = new Scanner(System.in);
@@ -239,5 +240,33 @@ public class AddressBookMain {
             }
             return contactList.size();
         }
+    }
+
+    //Method to read from JSON file using GSON
+    public static int readFromJSON() throws IOException {
+        int size = 0;
+        try {
+            Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_JSON));
+            List<Contact> contacts = new Gson().fromJson(reader, new TypeToken<List<Contact>>() {
+            }.getType());
+            for (Contact user : contacts) {
+                size++;
+            }
+            reader.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return size;
+    }
+
+    //Method to write contacts to a JSON file
+    public static boolean writeJSON(ArrayList<Contact> contacts) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        List contactList = contacts.stream().collect(Collectors.toList());
+        String json = gson.toJson(contactList);
+        FileWriter writer = new FileWriter(ADDRESS_BOOK_JSON);
+        writer.write(json);
+        writer.close();
+        return true;
     }
 }
