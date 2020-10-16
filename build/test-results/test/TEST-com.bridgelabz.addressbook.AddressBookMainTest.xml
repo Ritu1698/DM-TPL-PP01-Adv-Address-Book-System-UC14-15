@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.bridgelabz.addressbook.AddressBookMainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-10-16T11:28:20" hostname="LAPTOP-RGI87V6B" time="0.027">
+<testsuite name="com.bridgelabz.addressbook.AddressBookMainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-10-16T12:42:52" hostname="LAPTOP-RGI87V6B" time="0.037">
   <properties/>
-  <testcase name="given3Contacts_whenWrittenToFile_shouldMatchEntries" classname="com.bridgelabz.addressbook.AddressBookMainTest" time="0.027"/>
-  <system-out><![CDATA[[Contact{firstname='a', lastname='a', address='a', city='mumbai', state='maharashtra', zip='400088', number='1234567890', email='a@gmail.com'}, Contact{firstname='b', lastname='b', address='b', city='pune', state='maharashtra', zip='400001', number='1234567890', email='b@gmail.com'}, Contact{firstname='c', lastname='c', address='c', city='mumbai', state='maharashtra', zip='400022', number='1234567890', email='c@gmail.com'}]
-]]></system-out>
+  <testcase name="given3Contacts_whenReadSuccessfullyFromCSVFile_shouldReturnTotalsContactSize" classname="com.bridgelabz.addressbook.AddressBookMainTest" time="0.037"/>
+  <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

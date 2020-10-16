@@ -1,7 +1,19 @@
 package com.bridgelabz.addressbook;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -12,6 +24,7 @@ public class AddressBookMain {
     public HashMap<String, ArrayList<Contact>> StatePersonMap;
     public HashMap<String, ArrayList<Contact>> CityPersonMap;
     public static final String ADDRESS_BOOK_FILE = "C:/Users/Rituparna Biswas/eclipse-workspace/DM TPL PP01 Adv Address Book System UC14-15/src/main/resources/AddressBook.txt";
+    public static final String ADDRESS_BOOK_CSV = "C:/Users/Rituparna Biswas/eclipse-workspace/DM TPL PP01 Adv Address Book System UC14-15/src/main/resources/AddressBook.csv";
     Scanner sc = new Scanner(System.in);
     Scanner sc1 = new Scanner(System.in);
     Scanner sc2 = new Scanner(System.in);
@@ -141,7 +154,8 @@ public class AddressBookMain {
     }
 
     //Method To Write To File
-    public void writeData(ArrayList<Contact> persons) {
+    public boolean writeData(ArrayList<Contact> persons) {
+        boolean result = false;
         StringBuffer empBuffer = new StringBuffer();
         persons.forEach(employee -> {
             String employeeDataString = employee.toString().concat("\n");
@@ -149,10 +163,11 @@ public class AddressBookMain {
         });
         try {
             Files.write(Paths.get(ADDRESS_BOOK_FILE), empBuffer.toString().getBytes());
+            result = true;
 
         } catch (IOException ignored) {
-
         }
+        return result;
     }
 
     //Method To Count Of Entries
@@ -168,16 +183,13 @@ public class AddressBookMain {
     }
 
     //Method To Read Data
-    public ArrayList<Contact> readData(ArrayList<Contact> employeePayrollList) {
-
+    public long readData() {
+        long size = 0;
         try {
-            Files.lines(new File(ADDRESS_BOOK_FILE).toPath()).map(line -> line.trim()).forEach(line -> System.out.println(line));
-
-        } catch (IOException e) {
-
+            size = Files.lines(new File(ADDRESS_BOOK_FILE).toPath()).map(String::trim).count();
+        } catch (IOException ignored) {
         }
-        return employeePayrollList;
-
+        return size;
     }
 
     //Method To Print Data
@@ -191,5 +203,41 @@ public class AddressBookMain {
         }
         return contactList;
 
+    }
+
+    //Method to write to a CSV File
+    public static boolean writeCsv(ArrayList<Contact> c) throws IOException {
+        boolean result = false;
+        try (Writer writer = Files.newBufferedWriter(Paths.get(ADDRESS_BOOK_CSV))) {
+            StatefulBeanToCsv<Contact> beanToCsv = new StatefulBeanToCsvBuilder<Contact>(writer)
+                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                    .build();
+            ArrayList<Contact> myUsers = new ArrayList<>();
+            for (Contact user : c) {
+                myUsers.add(user);
+                result = true;
+            }
+            beanToCsv.write(myUsers);
+        } catch (CsvRequiredFieldEmptyException e) {
+            e.printStackTrace();
+        } catch (CsvDataTypeMismatchException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    //Method of reading from a CSV file
+    public static int readDataFromCSV() throws IOException {
+        ArrayList<Contact> contactList = new ArrayList<>();
+        try (Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_CSV));) {
+            CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+            String[] nextRecord;
+            while ((nextRecord = csvReader.readNext()) != null) {
+                contactList.add(new Contact(nextRecord[0], nextRecord[1], nextRecord[2], nextRecord[3], nextRecord[4],
+                        nextRecord[5], nextRecord[6], nextRecord[7]));
+            }
+            return contactList.size();
+        }
     }
 }

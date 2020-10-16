@@ -31,6 +31,22 @@ public class Contact {
         return firstname;
     }
 
+    public String getLastname() {
+        return lastname;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public String getCity() {
         return city;
     }
