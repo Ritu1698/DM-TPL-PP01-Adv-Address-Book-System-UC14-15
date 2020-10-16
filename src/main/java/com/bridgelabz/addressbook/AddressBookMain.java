@@ -207,51 +207,48 @@ public class AddressBookMain {
     }
 
     //Method to write to a CSV File
-    public static boolean writeCsv(ArrayList<Contact> c) throws IOException {
+    public static boolean writeCsv(ArrayList<Contact> contacts) throws IOException {
         boolean result = false;
         try (Writer writer = Files.newBufferedWriter(Paths.get(ADDRESS_BOOK_CSV))) {
-            StatefulBeanToCsv<Contact> beanToCsv = new StatefulBeanToCsvBuilder<Contact>(writer)
+            StatefulBeanToCsv<Contact> statefulBeanToCsv = new StatefulBeanToCsvBuilder<Contact>(writer)
                     .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
                     .build();
-            ArrayList<Contact> myUsers = new ArrayList<>();
-            for (Contact user : c) {
-                myUsers.add(user);
+            ArrayList<Contact> contactArrayList = new ArrayList<>();
+            for (Contact contact : contacts) {
+                contactArrayList.add(contact);
                 result = true;
             }
-            beanToCsv.write(myUsers);
+            statefulBeanToCsv.write(contactArrayList);
         } catch (CsvRequiredFieldEmptyException e) {
             e.printStackTrace();
         } catch (CsvDataTypeMismatchException e) {
             e.printStackTrace();
         }
         return result;
-
     }
 
     //Method of reading from a CSV file
     public static int readDataFromCSV() throws IOException {
-        ArrayList<Contact> contactList = new ArrayList<>();
-        try (Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_CSV));) {
+        ArrayList<Contact> contactArrayList = new ArrayList<>();
+        try (Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_CSV))) {
             CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
-            String[] nextRecord;
-            while ((nextRecord = csvReader.readNext()) != null) {
-                contactList.add(new Contact(nextRecord[0], nextRecord[1], nextRecord[2], nextRecord[3], nextRecord[4],
-                        nextRecord[5], nextRecord[6], nextRecord[7]));
+            String[] fields;
+            while ((fields = csvReader.readNext()) != null) {
+                contactArrayList.add(new Contact(fields[0], fields[1], fields[2], fields[3], fields[4],
+                        fields[5], fields[6], fields[7]));
             }
-            return contactList.size();
+            return contactArrayList.size();
         }
     }
 
-    //Method to read from JSON file using GSON
+    //Method to read from JSON file
     public static int readFromJSON() throws IOException {
         int size = 0;
         try {
             Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_JSON));
             List<Contact> contacts = new Gson().fromJson(reader, new TypeToken<List<Contact>>() {
             }.getType());
-            for (Contact user : contacts) {
-                size++;
-            }
+            size = contacts.size();
             reader.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -259,10 +256,10 @@ public class AddressBookMain {
         return size;
     }
 
-    //Method to write contacts to a JSON file
+    //Method to write to a JSON file
     public static boolean writeJSON(ArrayList<Contact> contacts) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        List contactList = contacts.stream().collect(Collectors.toList());
+        List contactList = new ArrayList<>(contacts);
         String json = gson.toJson(contactList);
         FileWriter writer = new FileWriter(ADDRESS_BOOK_JSON);
         writer.write(json);
