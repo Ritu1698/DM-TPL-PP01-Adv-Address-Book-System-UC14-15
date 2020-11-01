@@ -206,7 +206,7 @@ public class AddressBookMain {
 
     }
 
-    //Method to write to a CSV File
+    //Method to Write to a CSV File
     public static boolean writeCsv(ArrayList<Contact> contacts) throws IOException {
         boolean result = false;
         try (Writer writer = Files.newBufferedWriter(Paths.get(ADDRESS_BOOK_CSV))) {
@@ -219,6 +219,7 @@ public class AddressBookMain {
                 result = true;
             }
             statefulBeanToCsv.write(contactArrayList);
+            System.out.println(contactArrayList);
         } catch (CsvRequiredFieldEmptyException e) {
             e.printStackTrace();
         } catch (CsvDataTypeMismatchException e) {
@@ -227,7 +228,7 @@ public class AddressBookMain {
         return result;
     }
 
-    //Method of reading from a CSV file
+    //Method of Reading from a CSV File
     public static int readDataFromCSV() throws IOException {
         ArrayList<Contact> contactArrayList = new ArrayList<>();
         try (Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_CSV))) {
@@ -241,22 +242,7 @@ public class AddressBookMain {
         }
     }
 
-    //Method to read from JSON file
-    public static int readFromJSON() throws IOException {
-        int size = 0;
-        try {
-            Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_JSON));
-            List<Contact> contacts = new Gson().fromJson(reader, new TypeToken<List<Contact>>() {
-            }.getType());
-            size = contacts.size();
-            reader.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return size;
-    }
-
-    //Method to write to a JSON file
+    //Method to Write to a JSON File
     public static boolean writeJSON(ArrayList<Contact> contacts) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         List contactList = new ArrayList<>(contacts);
@@ -265,5 +251,21 @@ public class AddressBookMain {
         writer.write(json);
         writer.close();
         return true;
+    }
+
+    //Method to Read from JSON File
+    public static int readFromJSON() throws IOException {
+        int size = 0;
+        try {
+            Reader reader = Files.newBufferedReader(Paths.get(ADDRESS_BOOK_JSON));
+            List<Contact> contacts = new Gson().fromJson(reader, new TypeToken<List<Contact>>() {
+            }.getType());
+            size = contacts.size();
+            System.out.println(contacts);
+            reader.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return size;
     }
 }
